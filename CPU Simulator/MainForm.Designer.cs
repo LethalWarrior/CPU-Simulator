@@ -189,6 +189,7 @@
             this.BtnRun.Text = "PROCESS";
             this.BtnRun.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.BtnRun.UseVisualStyleBackColor = false;
+            this.BtnRun.Click += new System.EventHandler(this.BtnRun_Click);
             // 
             // groupBox2
             // 

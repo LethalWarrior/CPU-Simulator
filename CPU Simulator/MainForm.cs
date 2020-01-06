@@ -17,7 +17,7 @@ namespace CPU_Simulator
     {
         string latestAddress = "1";
         int currentAddressIndex = 0;
-        Instruction currentInstruction = new Instruction();
+        Instruction currentInstruction;
 
         //Slots for two, or three byte instruction 
         string firstDataByte = "";
@@ -88,7 +88,6 @@ namespace CPU_Simulator
                     }
                     else
                     {
-                        currentAddressIndex++;
                         Fetch(row.Cells[1].Value.ToString(), row.Cells[0].Value.ToString());
                         if (currentInstruction != null)
                         {
@@ -165,11 +164,12 @@ namespace CPU_Simulator
                                         {
                                             case "JMP [XXXX]":
                                                 LblIr.BackColor = Color.FromArgb(18, 18, 18);
-                                                currentAddressIndex = Convert.ToInt32(secondDataByte + firstDataByte, 2) - 1;
+                                                currentAddressIndex = Convert.ToInt32(secondDataByte + firstDataByte, 2) - 2;
                                                 i = currentAddressIndex;
 
                                                 firstDataByte = "";
                                                 secondDataByte = "";
+                                                currentInstruction =null;
                                                 break;
                                             default:
                                                 break;
@@ -308,6 +308,7 @@ namespace CPU_Simulator
         private void Fetch(string address, string instruction)
         {
             Wait(500);
+            currentAddressIndex++;
             LblPc.BackColor = Color.FromArgb(168, 18, 18);
             LblPc.Text = address;
             if (instruction != "")
@@ -320,7 +321,7 @@ namespace CPU_Simulator
                 LblIr.BackColor = Color.FromArgb(18, 18, 18);
 
                 var query = Instructions().Find(x => x.InstructionInBit == instruction);
-                if (query != null)
+                if (query != null && currentInstruction == null)
                 {
                     currentInstruction = query;
                 }
@@ -340,6 +341,7 @@ namespace CPU_Simulator
             targetRegister.BackColor = Color.FromArgb(18, 18, 18);
             LblIr.BackColor = Color.FromArgb(18, 18, 18);
 
+            currentInstruction = null;
             firstDataByte = "";
         }
 
@@ -352,6 +354,7 @@ namespace CPU_Simulator
             targetRegister.Text = BitWiseAnd(targetRegister.Text, operandRegister.Text);
             Wait(500);
             targetRegister.BackColor = Color.FromArgb(18, 18, 18);
+            currentInstruction = null;
         }
 
         private void ExecuteAdd(Label targetRegister, Label operandRegister)
@@ -372,6 +375,7 @@ namespace CPU_Simulator
 
             Wait(500);
             LblFlag.BackColor = Color.FromArgb(18, 18, 18);
+            currentInstruction = null;
         }
 
         #endregion
