@@ -133,6 +133,24 @@ namespace CPU_Simulator
                                         case "AND R3, R2":
                                             ExecuteAnd(LblR3, LblR2);
                                             break;
+                                        case "XOR R1, R2":
+                                            ExecuteXor(LblR1, LblR2);
+                                            break;
+                                        case "XOR R1, R3":
+                                            ExecuteXor(LblR1, LblR3);
+                                            break;
+                                        case "XOR R2, R1":
+                                            ExecuteXor(LblR2, LblR1);
+                                            break;
+                                        case "XOR R2, R3":
+                                            ExecuteXor(LblR2, LblR3);
+                                            break;
+                                        case "XOR R3, R1":
+                                            ExecuteXor(LblR3, LblR1);
+                                            break;
+                                        case "XOR R3, R2":
+                                            ExecuteXor(LblR3, LblR2);
+                                            break;
                                     }
                                     break;
                                 case InstructionType.TwoByte:
@@ -169,7 +187,7 @@ namespace CPU_Simulator
 
                                                 firstDataByte = "";
                                                 secondDataByte = "";
-                                                currentInstruction =null;
+                                                currentInstruction = null;
                                                 break;
                                             default:
                                                 break;
@@ -177,7 +195,7 @@ namespace CPU_Simulator
                                     }
                                     else
                                     {
-                                        if(firstDataByte == "" && secondDataByte == "")
+                                        if (firstDataByte == "" && secondDataByte == "")
                                         {
                                             ChangeInstructionInfo(currentInstruction.InstructionName);
                                         }
@@ -195,12 +213,12 @@ namespace CPU_Simulator
 
         private void DgvMemory_CellEnter(object sender, DataGridViewCellEventArgs e)
         {
-            if(e.ColumnIndex == 0)
+            if (e.ColumnIndex == 0)
             {
                 if (DgvMemory.Rows[e.RowIndex].Cells[1].Value == null)
                 {
                     DgvMemory.Rows[e.RowIndex].Cells[1].Value = Convert.ToString(Convert.ToInt32(latestAddress, 10), 2).PadLeft(16, '0');
-                    latestAddress = (Convert.ToInt32(latestAddress, 10)+1).ToString();
+                    latestAddress = (Convert.ToInt32(latestAddress, 10) + 1).ToString();
                 }
             }
         }
@@ -238,6 +256,12 @@ namespace CPU_Simulator
                 (new Instruction("AND R3, R1", "01001101", InstructionType.OneByte)),
                 (new Instruction("AND R3, R2", "01001110", InstructionType.OneByte)),
                 (new Instruction("JMP [XXXX]", "01111111", InstructionType.ThreeByte)),
+                (new Instruction("XOR R1, R2", "00000001", InstructionType.OneByte)),
+                (new Instruction("XOR R1, R3", "00000010", InstructionType.OneByte)),
+                (new Instruction("XOR R2, R1", "00000011", InstructionType.OneByte)),
+                (new Instruction("XOR R2, R3", "00000100", InstructionType.OneByte)),
+                (new Instruction("XOR R3, R1", "00000101", InstructionType.OneByte)),
+                (new Instruction("XOR R3, R2", "00000110", InstructionType.OneByte)),
             };
             return instructions;
         }
@@ -248,6 +272,16 @@ namespace CPU_Simulator
             for (int i = 0; i < 8; i++)
             {
                 result += ((byte1[i] == '0' ? 0 : 1) & (byte2[i] == '0' ? 0 : 1)).ToString();
+            }
+            return result;
+        }
+
+        private string BitWiseXor(string byte1, string byte2)
+        {
+            string result = "";
+            for (int i = 0; i < 8; i++)
+            {
+                result += ((byte1[i] == '0' ? 0 : 1) ^ (byte2[i] == '0' ? 0 : 1)).ToString();
             }
             return result;
         }
@@ -298,9 +332,9 @@ namespace CPU_Simulator
             Wait(500);
             LblInstructionName.Text = instructionName;
             LblInstructionName.BackColor = Color.White;
-            LblInstructionName.ForeColor = Color.FromArgb(18,18,18);
+            LblInstructionName.ForeColor = Color.FromArgb(18, 18, 18);
             Wait(500);
-            LblInstructionName.BackColor = Color.FromArgb(18,18,18);
+            LblInstructionName.BackColor = Color.FromArgb(18, 18, 18);
             LblInstructionName.ForeColor = Color.White;
             Wait(500);
         }
@@ -352,6 +386,18 @@ namespace CPU_Simulator
             operandRegister.BackColor = Color.FromArgb(18, 18, 18);
             targetRegister.BackColor = Color.FromArgb(168, 18, 18);
             targetRegister.Text = BitWiseAnd(targetRegister.Text, operandRegister.Text);
+            Wait(500);
+            targetRegister.BackColor = Color.FromArgb(18, 18, 18);
+            currentInstruction = null;
+        }
+
+        private void ExecuteXor(Label targetRegister, Label operandRegister)
+        {
+            operandRegister.BackColor = Color.FromArgb(168, 18, 18);
+            Wait(500);
+            operandRegister.BackColor = Color.FromArgb(18, 18, 18);
+            targetRegister.BackColor = Color.FromArgb(168, 18, 18);
+            targetRegister.Text = BitWiseXor(targetRegister.Text, operandRegister.Text);
             Wait(500);
             targetRegister.BackColor = Color.FromArgb(18, 18, 18);
             currentInstruction = null;
